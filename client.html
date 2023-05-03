@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Realtime Chatroom - PieSocket Channels</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      input,
+      button {
+        font-size: 14px;
+        padding: 5px 10px;
+        margin: 5px;
+      }
+
+      #home,
+      #login,
+      #register {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 20px;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #chat-input,
+      #chat-log {
+        width: 100%;
+        max-width: 500px;
+      }
+
+      #chat-input {
+        height: 80px;
+        resize: none;
+        margin-bottom: 10px;
+      }
+
+      #chat-log {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+      }
+
+      #chat-log div {
+        margin-bottom: 5px;
+      }
+
+      #chat-log .system {
+        color: #999;
+        font-style: italic;
+      }
+    </style>
+
+    <script src="https://unpkg.com/piesocket-js@2"></script>
+  </head>
+
+  <body>
+    <div id="login">
+      <h1>Login</h1>
+      <form onsubmit="login(event)">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+        <button onclick="show('register'); hide('login');">Register</button>
+      </form>
+    </div>
+
+    <div id="register" style="display: none">
+      <h2>Register</h2>
+      <form onsubmit="register(event)">
+        <label for="register-email">Email:</label>
+        <input type="email" id="register-email" name="email" required />
+        <br />
+        <label for="register-password">Password:</label>
+        <input
+          type="password"
+          id="register-password"
+          name="password"
+          required
+        />
+        <br />
+        <button type="submit">Register</button>
+      </form>
+      <button onclick="show('login'); hide('register');">Back to Login</button>
+    </div>
+
+    <div id="home" style="display: none">
+      <h1>Welcome, <span id="username"></span></h1>
+      <button onclick="createRoom()">Create Room</button>
+      <button onclick="joinRoom()">Join Room</button>
+    </div>
+
+    <div id="chatroom" style="display: none">
+      <h2 id="room-id-display"></h2>
+      <!-- Basic Chatroom Starts -->
+      <textarea id="chat-input" placeholder="Type your message..."></textarea>
+      <div id="chat-log"></div>
+    </div>
+
+    <script>
+      const API_URL = "auth.php";
+
+      function show(elementId) {
+        document.getElementById(elementId).style.display = "block";
+      }
+
+      function hide(elementId) {
+        document.getElementById(elementId).style.display = "none";
+      }
+
+      async function login(event) {
+        event.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            action: "login",
+            email: email,
+            password: password,
+          }),
+        });
+        const data = await response.json();
+
+        if (data.status === "success") {
+          document.getElementById("username").textContent = email;
+          hide("login");
+          show("home");
+        } else {
+          alert("Error signing in: " + data.message);
+        }
+      }
+
+      async function register(event) {
+        event.preventDefault();
+
+        const email = document.getElementById("register-email").value;
+        const password = document.getElementById("register-password").value;
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            action: "register",
+            email: email,
+            password: password,
+          }),
+        });
+        const data = await response.json();
+
+        if (data.status === "success") {
+          alert("Registration successful! Please log in.");
+          hide("register");
+          show("login");
+        } else {
+          alert("Error registering: " + data.message);
+        }
+      }
+
+      async function createRoom() {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          body: new URLSearchParams({ action: "createRoom" }),
+        });
+        const data = await response.json();
+
+        if (data.status === "success") {
+          joinRoom(data.roomId);
+        } else {
+          alert("Error creating room: " + data.message);
+        }
+      }
+
+      function joinRoom(roomId = null) {
+        if (!roomId) {
+          roomId = prompt("Enter room ID");
+        }
+        if (roomId) {
+          hide("home");
+          initChat(roomId);
+          show("chatroom");
+
+          // Add this line to display the room ID on the page
+          document.getElementById("room-id-display").innerText =
+            "Room ID: " + roomId;
+        } else {
+          alert("Please enter a valid room ID");
+        }
+      }
+
+      function initChat(roomId) {
+        const username = document.getElementById("username").textContent;
+        const piesocket = new PieSocket({
+          clusterId: "s8880.fra1",
+          apiKey: "QRN2jxzMaDIvIn16SNAnNW6BMyBgnnSI8DmjooVS",
+          consoleLogs: true,
+          notifySelf: true,
+          presence: true,
+          userId: username,
+        });
+
+        piesocket.subscribe(roomId).then((room) => {
+          window.room = room;
+
+          room.listen("new-message", (data, meta) => {
+            addMessageToChatLog(data.from + ": " + data.message);
+          });
+
+          room.listen("system:member_joined", (data, meta) => {
+            addMessageToChatLog(data.member.user + " joined");
+          });
+
+          room.listen("system:member_left", (data, meta) => {
+            addMessageToChatLog(data.member.user + " left");
+          });
+        });
+
+        const chatInput = document.getElementById("chat-input");
+        chatInput.addEventListener("keyup", (e) => {
+          if (e.key === "Enter") {
+            room.publish("new-message", {
+              message: chatInput.value,
+              from: username,
+            });
+            chatInput.value = "";
+          }
+        });
+      }
+
+      function addMessageToChatLog(content) {
+        const chatLog = document.getElementById("chat-log");
+        const message = document.createElement("div");
+        message.innerHTML = content;
+        chatLog.appendChild(message);
+        chatLog.scrollTop = chatLog.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
