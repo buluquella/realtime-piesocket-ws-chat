@@ -21,8 +21,8 @@ if ($conn->connect_error) {
 $action = $_POST['action'];
 
 if ($action === 'login') {
-  $email = $_POST['email'];
-  $password = $_POST['password'];
+  $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+  $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
 
   // Check if user exists using prepared statements
   $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
@@ -45,8 +45,8 @@ if ($action === 'login') {
 
   $stmt->close();
 } elseif ($action === 'register') {
-  $email = $_POST['email'];
-  $password = $_POST['password'];
+  $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+  $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
 
   // Hash the password before storing it in the database
   $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -80,4 +80,3 @@ if ($action === 'login') {
 }
 
 $conn->close();
-?>
