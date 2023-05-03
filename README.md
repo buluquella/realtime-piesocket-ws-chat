@@ -37,6 +37,27 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
+#### Inserting and querying data
+
+Inserting data into the hypertable is done via normal SQL commands:
+
+```sql
+-- Create the 'users' table
+CREATE TABLE `users` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(255) NOT NULL UNIQUE,
+  `password` VARCHAR(255) NOT NULL
+);
+
+-- Create the 'rooms' table
+CREATE TABLE `rooms` (
+  `id` VARCHAR(6) PRIMARY KEY,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+```
+
+
 ## 📜 License
 
 [MIT](https://choosealicense.com/licenses/mit/)
