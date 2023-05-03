@@ -1,4 +1,4 @@
-const API_URL = "php/auth.php";
+const API_URL = "../php/auth.php";
 
 function show(elementId) {
   document.getElementById(elementId).style.display = "flex";
