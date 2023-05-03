@@ -136,8 +136,20 @@
     <div id="login">
       <h1>Login</h1>
       <form onsubmit="login(event)">
-        <input type="username" id="username" placeholder="username" required />
-        <input type="password" id="password" placeholder="Password" required />
+        <input
+          type="username"
+          name="username"
+          id="username"
+          placeholder="username"
+          required
+        />
+        <input
+          type="password"
+          name="username"
+          id="password"
+          placeholder="Password"
+          required
+        />
         <button type="submit">Login</button>
         <button onclick="show('register'); hide('login');">Register</button>
       </form>
@@ -182,6 +194,6 @@
 
     <!-- version="2" src="./scripts/index.js" -->
 
-    <script src="./static/index.js"></script>
+    <script src="/static/index.js"></script>
   </body>
 </html>

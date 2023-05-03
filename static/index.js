@@ -1,4 +1,4 @@
-const API_URL = "../php/auth.php";
+const API_URL = "php/auth.php";
 
 function show(elementId) {
   document.getElementById(elementId).style.display = "block";
@@ -11,35 +11,44 @@ function hide(elementId) {
 async function login(event) {
   event.preventDefault();
 
-  const email = document.getElementById("email").value;
+  const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      action: "login",
-      email: email,
-      password: password,
-    }),
-  });
-  const data = await response.json();
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        action: "login",
+        username: username,
+        password: password,
+      }),
+    });
 
-  if (data.status === "success") {
-    document.getElementById("username").textContent = email;
-    hide("login");
-    show("home");
-  } else {
-    alert("Error signing in: " + data.message);
+    if (!response.ok) {
+      throw new Error("Failed to login: " + response.status);
+    }
+
+    const data = await response.json();
+
+    if (data.status === "success") {
+      document.getElementById("username").textContent = username;
+      hide("login");
+      show("home");
+    } else {
+      throw new Error("Error signing in: " + data.message);
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Error signing in: " + error.message);
   }
 }
 
 async function register(event) {
   event.preventDefault();
-
-  const email = document.getElementById("register-email").value;
+  const username = document.getElementById("register-username").value;
   const password = document.getElementById("register-password").value;
 
   const response = await fetch(API_URL, {
@@ -47,16 +56,17 @@ async function register(event) {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: new URLSearchParams({
-      action: "register",
-      email: email,
-      password: password,
-    }),
+    body: new URLSearchParams({ action: "register", username, password }),
   });
+
+  if (!response.ok) {
+    console.error("Error: ", response.statusText);
+    return;
+  }
+
   const data = await response.json();
 
   if (data.status === "success") {
-    alert("Registration successful! Please log in.");
     hide("register");
     show("login");
   } else {
@@ -67,9 +77,16 @@ async function register(event) {
 async function createRoom() {
   const response = await fetch(API_URL, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
     body: new URLSearchParams({ action: "createRoom" }),
   });
-  const data = await response.json();
+
+  const responseText = await response.text();
+
+  // Metni tekrar JSON'a dönüştürmek için
+  const data = JSON.parse(responseText);
 
   if (data.status === "success") {
     joinRoom(data.roomId);
@@ -115,7 +132,7 @@ async function initChat(roomId) {
   const piesocket = new PieSocket({
     clusterId: "s8880.fra1",
     apiKey: "QRN2jxzMaDIvIn16SNAnNW6BMyBgnnSI8DmjooVS",
-    consoleLogs: true,
+    consoleLogs: false,
     notifySelf: true,
     presence: true,
     userId: username,
@@ -135,15 +152,6 @@ async function initChat(roomId) {
     room.listen("system:member_left", (data, meta) => {
       addMessageToChatLog(data.member.user + " left");
     });
-  });
-
-  // Mesajları şifrele ve şifre çöz
-  room.listen("new-message", async (data, meta) => {
-    const decryptedMessage = await decryptMessage(
-      data.encryptedMessage,
-      users[username].privateKey
-    );
-    addMessageToChatLog(data.from + ": " + decryptedMessage);
   });
 
   const chatInput = document.getElementById("chat-input");

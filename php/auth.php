@@ -3,16 +3,12 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
-// Hata raporlamayı aç
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+
 require_once('dbconfig.php');
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {
-  http_response_code(500);
   die(json_encode(['status' => 'error', 'message' => 'Connection failed: ' . $conn->connect_error]));
 }
 
@@ -41,15 +37,15 @@ if ($action === 'login') {
 
   $stmt->close();
 } elseif ($action === 'register') {
-  $email = $_POST['email'];
+  $username = $_POST['username'];
   $password = $_POST['password'];
 
   // Hash the password before storing it in the database
   $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
   // Use prepared statements to prevent SQL injection
-  $stmt = $conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-  $stmt->bind_param("ss", $email, $hashed_password);
+  $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+  $stmt->bind_param("ss", $username, $hashed_password);
 
   if ($stmt->execute()) {
     echo json_encode(["status" => "success"]);
