@@ -29,6 +29,8 @@ A simple and efficient realtime chat application built using PieSocket, WebSocke
 4. 🌐 Upload the project files to your web server.
 5. 🌟 Access the application in your browser by navigating to the corresponding URL.
 
+> :information_source: You can test the app at [here](https://buluquella.fun/test/chatting_app/index.html).
+
 ## 🤝 Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
