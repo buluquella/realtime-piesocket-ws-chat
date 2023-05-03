@@ -5,14 +5,26 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f0f0f0;
+  background-color: #e5beec;
 }
 
 form {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
   margin-bottom: 10px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #2a2f4f;
+  text-align: center;
 }
 
 input,
@@ -22,14 +34,37 @@ button {
   margin: 5px;
 }
 
+input {
+  background-color: #fde2f3;
+  color: #2a2f4f;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 2px solid #2a2f4f;
+}
+
+button {
+  background-color: #2a2f4f;
+  color: #fde2f3;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 2px solid #2a2f4f;
+  cursor: pointer;
+}
+
 #home,
 #login,
 #register {
-  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #917fb3;
   border-radius: 4px;
   padding: 20px;
-  background-color: white;
+  background-color: #fde2f3;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid #2a2f4f;
+  border-radius: 10px;
 }
 
 #chat-input,
@@ -39,15 +74,27 @@ button {
 }
 
 #chat-input {
-  height: 80px;
+  height: 60px;
   resize: none;
+  overflow-y: auto;
+  border: 2px solid #917fb3;
+  background-color: #fde2f3;
+  color: #917fb3;
+  padding: 10px;
+  border-radius: 4px;
   margin-bottom: 10px;
+}
+
+#chat-input::placeholder {
+  color: #917fb3;
 }
 
 #chat-log {
   height: 300px;
   overflow-y: auto;
-  border: 1px solid #ccc;
+  border: 2px solid #917fb3;
+  color: #917fb3;
+  background-color: #fde2f3;
   padding: 10px;
   border-radius: 4px;
   margin-bottom: 10px;
@@ -58,6 +105,13 @@ button {
 }
 
 #chat-log .system {
-  color: #999;
+  color: #917fb3;
   font-style: italic;
+}
+
+#chatroom {
+  display: flex;
+  width: 500px;
+  flex-direction: column-reverse;
+  outline: 0;
 }
