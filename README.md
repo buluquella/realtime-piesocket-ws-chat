@@ -39,8 +39,6 @@ Please make sure to update tests as appropriate.
 
 ## 💾 Creating Database Tables
 
-Inserting data into the hypertable is done via normal SQL commands:
-
 ```sql
 -- Create the 'users' table
 CREATE TABLE `users` (
@@ -56,7 +54,6 @@ CREATE TABLE `rooms` (
 );
 
 ```
-
 
 ## 📜 License
 
