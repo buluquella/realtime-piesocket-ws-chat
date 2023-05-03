@@ -37,7 +37,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
-#### Inserting and querying data
+## 💾 Creating Database Tables
 
 Inserting data into the hypertable is done via normal SQL commands:
 
