@@ -24,9 +24,11 @@ if ($action === 'login') {
   $email = $_POST['email'];
   $password = $_POST['password'];
 
-  // Check if user exists
-  $sql = "SELECT * FROM users WHERE email = '$email'";
-  $result = $conn->query($sql);
+  // Check if user exists using prepared statements
+  $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+  $stmt->bind_param("s", $email);
+  $stmt->execute();
+  $result = $stmt->get_result();
 
   if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
@@ -40,6 +42,8 @@ if ($action === 'login') {
   } else {
     echo json_encode(['status' => 'error', 'message' => 'Invalid email or password']);
   }
+
+  $stmt->close();
 } elseif ($action === 'register') {
   $email = $_POST['email'];
   $password = $_POST['password'];
@@ -62,12 +66,17 @@ if ($action === 'login') {
   // Create a new room
   $roomId = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 6);
 
-  $sql = "INSERT INTO rooms (id) VALUES ('$roomId')";
-  if ($conn->query($sql) === TRUE) {
+  // Use prepared statements to prevent SQL injection
+  $stmt = $conn->prepare("INSERT INTO rooms (id) VALUES (?)");
+  $stmt->bind_param("s", $roomId);
+
+  if ($stmt->execute()) {
     echo json_encode(['status' => 'success', 'roomId' => $roomId]);
   } else {
     echo json_encode(['status' => 'error', 'message' => 'Error creating room']);
   }
+
+  $stmt->close();
 }
 
 $conn->close();
