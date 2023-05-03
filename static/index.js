@@ -1,7 +1,7 @@
 const API_URL = "php/auth.php";
 
 function show(elementId) {
-  document.getElementById(elementId).style.display = "block";
+  document.getElementById(elementId).style.display = "flex";
 }
 
 function hide(elementId) {
@@ -11,44 +11,35 @@ function hide(elementId) {
 async function login(event) {
   event.preventDefault();
 
-  const username = document.getElementById("username").value;
+  const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        action: "login",
-        username: username,
-        password: password,
-      }),
-    });
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      action: "login",
+      email: email,
+      password: password,
+    }),
+  });
+  const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error("Failed to login: " + response.status);
-    }
-
-    const data = await response.json();
-
-    if (data.status === "success") {
-      document.getElementById("username").textContent = username;
-      hide("login");
-      show("home");
-    } else {
-      throw new Error("Error signing in: " + data.message);
-    }
-  } catch (error) {
-    console.error(error);
-    alert("Error signing in: " + error.message);
+  if (data.status === "success") {
+    document.getElementById("username").textContent = email;
+    hide("login");
+    show("home");
+  } else {
+    alert("Error signing in: " + data.message);
   }
 }
 
 async function register(event) {
   event.preventDefault();
-  const username = document.getElementById("register-username").value;
+
+  const email = document.getElementById("register-email").value;
   const password = document.getElementById("register-password").value;
 
   const response = await fetch(API_URL, {
@@ -56,17 +47,16 @@ async function register(event) {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: new URLSearchParams({ action: "register", username, password }),
+    body: new URLSearchParams({
+      action: "register",
+      email: email,
+      password: password,
+    }),
   });
-
-  if (!response.ok) {
-    console.error("Error: ", response.statusText);
-    return;
-  }
-
   const data = await response.json();
 
   if (data.status === "success") {
+    alert("Registration successful! Please log in.");
     hide("register");
     show("login");
   } else {
@@ -77,16 +67,9 @@ async function register(event) {
 async function createRoom() {
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
     body: new URLSearchParams({ action: "createRoom" }),
   });
-
-  const responseText = await response.text();
-
-  // Metni tekrar JSON'a dönüştürmek için
-  const data = JSON.parse(responseText);
+  const data = await response.json();
 
   if (data.status === "success") {
     joinRoom(data.roomId);
@@ -132,7 +115,7 @@ async function initChat(roomId) {
   const piesocket = new PieSocket({
     clusterId: "s8880.fra1",
     apiKey: "QRN2jxzMaDIvIn16SNAnNW6BMyBgnnSI8DmjooVS",
-    consoleLogs: false,
+    consoleLogs: true,
     notifySelf: true,
     presence: true,
     userId: username,
@@ -152,6 +135,15 @@ async function initChat(roomId) {
     room.listen("system:member_left", (data, meta) => {
       addMessageToChatLog(data.member.user + " left");
     });
+  });
+
+  // Mesajları şifrele ve şifre çöz
+  room.listen("new-message", async (data, meta) => {
+    const decryptedMessage = await decryptMessage(
+      data.encryptedMessage,
+      users[username].privateKey
+    );
+    addMessageToChatLog(data.from + ": " + decryptedMessage);
   });
 
   const chatInput = document.getElementById("chat-input");
