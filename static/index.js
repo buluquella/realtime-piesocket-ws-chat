@@ -11,7 +11,7 @@ function hide(elementId) {
 async function login(event) {
   event.preventDefault();
 
-  const username = document.getElementById("username").value;
+  const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   const response = await fetch(API_URL, {
@@ -21,14 +21,14 @@ async function login(event) {
     },
     body: new URLSearchParams({
       action: "login",
-      username: username,
+      email: email,
       password: password,
     }),
   });
   const data = await response.json();
 
   if (data.status === "success") {
-    document.getElementById("username").textContent = username;
+    document.getElementById("username").textContent = email;
     hide("login");
     show("home");
   } else {
@@ -39,7 +39,7 @@ async function login(event) {
 async function register(event) {
   event.preventDefault();
 
-  const username = document.getElementById("register-username").value;
+  const email = document.getElementById("register-email").value;
   const password = document.getElementById("register-password").value;
 
   const response = await fetch(API_URL, {
@@ -49,7 +49,7 @@ async function register(event) {
     },
     body: new URLSearchParams({
       action: "register",
-      username: username,
+      email: email,
       password: password,
     }),
   });
@@ -67,16 +67,9 @@ async function register(event) {
 async function createRoom() {
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
     body: new URLSearchParams({ action: "createRoom" }),
   });
-
-  const responseText = await response.text();
-
-  // Metni tekrar JSON'a dönüştürmek için
-  const data = JSON.parse(responseText);
+  const data = await response.json();
 
   if (data.status === "success") {
     joinRoom(data.roomId);
@@ -122,7 +115,7 @@ async function initChat(roomId) {
   const piesocket = new PieSocket({
     clusterId: "s8880.fra1",
     apiKey: "QRN2jxzMaDIvIn16SNAnNW6BMyBgnnSI8DmjooVS",
-    consoleLogs: false,
+    consoleLogs: true,
     notifySelf: true,
     presence: true,
     userId: username,
@@ -142,6 +135,15 @@ async function initChat(roomId) {
     room.listen("system:member_left", (data, meta) => {
       addMessageToChatLog(data.member.user + " left");
     });
+  });
+
+  // Mesajları şifrele ve şifre çöz
+  room.listen("new-message", async (data, meta) => {
+    const decryptedMessage = await decryptMessage(
+      data.encryptedMessage,
+      users[username].privateKey
+    );
+    addMessageToChatLog(data.from + ": " + decryptedMessage);
   });
 
   const chatInput = document.getElementById("chat-input");
