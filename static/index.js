@@ -11,7 +11,7 @@ function hide(elementId) {
 async function login(event) {
   event.preventDefault();
 
-  const email = document.getElementById("email").value;
+  const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
   const response = await fetch(API_URL, {
@@ -21,14 +21,14 @@ async function login(event) {
     },
     body: new URLSearchParams({
       action: "login",
-      email: email,
+      username: username,
       password: password,
     }),
   });
   const data = await response.json();
 
   if (data.status === "success") {
-    document.getElementById("username").textContent = email;
+    document.getElementById("username").textContent = username;
     hide("login");
     show("home");
   } else {
@@ -39,7 +39,7 @@ async function login(event) {
 async function register(event) {
   event.preventDefault();
 
-  const email = document.getElementById("register-email").value;
+  const username = document.getElementById("register-username").value;
   const password = document.getElementById("register-password").value;
 
   const response = await fetch(API_URL, {
@@ -49,7 +49,7 @@ async function register(event) {
     },
     body: new URLSearchParams({
       action: "register",
-      email: email,
+      username: username,
       password: password,
     }),
   });
@@ -67,9 +67,16 @@ async function register(event) {
 async function createRoom() {
   const response = await fetch(API_URL, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
     body: new URLSearchParams({ action: "createRoom" }),
   });
-  const data = await response.json();
+
+  const responseText = await response.text();
+
+  // Metni tekrar JSON'a dönüştürmek için
+  const data = JSON.parse(responseText);
 
   if (data.status === "success") {
     joinRoom(data.roomId);
@@ -94,12 +101,28 @@ function joinRoom(roomId = null) {
   }
 }
 
-function initChat(roomId) {
+const users = {};
+
+async function initChat(roomId) {
   const username = document.getElementById("username").textContent;
+
+  // Anahtar çifti oluştur ve sakla
+  const keyPair = await window.crypto.subtle.generateKey(
+    {
+      name: "RSA-OAEP",
+      modulusLength: 2048,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: "SHA-256",
+    },
+    true,
+    ["encrypt", "decrypt"]
+  );
+  users[username] = keyPair;
+
   const piesocket = new PieSocket({
     clusterId: "s8880.fra1",
     apiKey: "QRN2jxzMaDIvIn16SNAnNW6BMyBgnnSI8DmjooVS",
-    consoleLogs: true,
+    consoleLogs: false,
     notifySelf: true,
     presence: true,
     userId: username,
@@ -131,6 +154,27 @@ function initChat(roomId) {
       chatInput.value = "";
     }
   });
+}
+
+async function encryptMessage(message, publicKey) {
+  const encoder = new TextEncoder();
+  const encodedMessage = encoder.encode(message);
+  const encryptedMessage = await window.crypto.subtle.encrypt(
+    { name: "RSA-OAEP" },
+    publicKey,
+    encodedMessage
+  );
+  return new Uint8Array(encryptedMessage);
+}
+
+async function decryptMessage(encryptedMessage, privateKey) {
+  const decryptedMessage = await window.crypto.subtle.decrypt(
+    { name: "RSA-OAEP" },
+    privateKey,
+    encryptedMessage
+  );
+  const decoder = new TextDecoder();
+  return decoder.decode(decryptedMessage);
 }
 
 function addMessageToChatLog(content) {

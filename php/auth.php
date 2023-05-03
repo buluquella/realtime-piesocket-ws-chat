@@ -3,13 +3,14 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
-
+// Hata raporlamayı aç
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 require_once('dbconfig.php');
 
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
 if ($conn->connect_error) {
   http_response_code(500);
   die(json_encode(['status' => 'error', 'message' => 'Connection failed: ' . $conn->connect_error]));
@@ -18,25 +19,27 @@ if ($conn->connect_error) {
 $action = $_POST['action'];
 
 if ($action === 'login') {
-  $email = $_POST['email'];
+  $username = $_POST['username'];
   $password = $_POST['password'];
 
-  // Check if user exists
-  $sql = "SELECT * FROM users WHERE email = '$email'";
-  $result = $conn->query($sql);
+  $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+  $stmt->bind_param("s", $username);
+  $stmt->execute();
+  $result = $stmt->get_result();
 
   if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
 
-    // Verify the password
     if (password_verify($password, $user['password'])) {
       echo json_encode(['status' => 'success']);
     } else {
-      echo json_encode(['status' => 'error', 'message' => 'Invalid email or password']);
+      echo json_encode(['status' => 'error', 'message' => 'Invalid username or password']);
     }
   } else {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid email or password']);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid username or password']);
   }
+
+  $stmt->close();
 } elseif ($action === 'register') {
   $email = $_POST['email'];
   $password = $_POST['password'];
@@ -56,7 +59,6 @@ if ($action === 'login') {
 
   $stmt->close();
 } elseif ($action === 'createRoom') {
-  // Create a new room
   $roomId = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 6);
 
   $sql = "INSERT INTO rooms (id) VALUES ('$roomId')";
