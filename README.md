@@ -2,7 +2,7 @@
 
 A simple and efficient realtime chat application built using PieSocket, WebSockets, PHP, MySQL, and JavaScript. Users can create chat rooms, join existing rooms, and chat with other users in real-time.
 
-> :information_source: You are welcome to use my database for testing purposes. However, for your own projects, it's recommended to set up your own database.
+> ℹ️ Note: While you are welcome to use our database for testing purposes, it is recommended that you set up your own database for your own projects
 
 ## 🌟 Features
 
@@ -13,13 +13,13 @@ A simple and efficient realtime chat application built using PieSocket, WebSocke
 
 ## 🛠️ Technologies Used
 
-- [PieSocket](https://www.piesocket.com/)
-- [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
-- [PHP](https://www.php.net/)
-- [MySQL](https://www.mysql.com/)
-- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-- [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML)
-- [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
+- 🍰 [PieSocket](https://www.piesocket.com/)
+- 🌐 [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+- 🐘 [PHP](https://www.php.net/)
+- 🐬 [MySQL](https://www.mysql.com/)
+- 🚀 [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+- 🎨 [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML)
+- 🎨 [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
 
 ## 📦 Installation
 
