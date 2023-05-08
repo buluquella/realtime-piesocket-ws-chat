@@ -24,7 +24,7 @@ A simple and efficient realtime chat application built using PieSocket, WebSocke
 ## 📦 Installation
 
 1. 📥 Clone the repository or download the source code.
-2. 📚 Import the provided `table.sql` file into your MySQL server to create the necessary tables.
+2. 📚 Import the provided `database.sql` file into your MySQL server to create the necessary tables.
 3. ⚙️ Update the `auth.php` file with your MySQL server credentials and connection details.
 4. 🌐 Upload the project files to your web server.
 5. 🌟 Access the application in your browser by navigating to the corresponding URL.
