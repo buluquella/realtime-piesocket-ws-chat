@@ -24,36 +24,16 @@ A simple and efficient realtime chat application built using PieSocket, WebSocke
 ## 📦 Installation
 
 1. 📥 Clone the repository or download the source code.
-2. 📚 Import the provided `database.sql` file into your MySQL server to create the necessary tables.
-3. ⚙️ Update the `dbconfig.php` file with your MySQL server credentials and connection details.
+2. 📚 Import the provided `table.sql` file into your MySQL server to create the necessary tables.
+3. ⚙️ Update the `auth.php` file with your MySQL server credentials and connection details.
 4. 🌐 Upload the project files to your web server.
 5. 🌟 Access the application in your browser by navigating to the corresponding URL.
-
-> :information_source: You can test the app at [here](https://buluquella.fun/test/chatting_app/index.html).
 
 ## 🤝 Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
-
-## 💾 Creating Database Tables
-
-```sql
--- Create the 'users' table
-CREATE TABLE `users` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `username` VARCHAR(255) NOT NULL UNIQUE,
-  `password` VARCHAR(255) NOT NULL
-);
-
--- Create the 'rooms' table
-CREATE TABLE `rooms` (
-  `id` VARCHAR(6) PRIMARY KEY,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-```
 
 ## 📜 License
 
