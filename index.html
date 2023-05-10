@@ -10,127 +10,9 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
     />
-    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/main.css?v=1" />
     <script src="https://unpkg.com/piesocket-js@2"></script>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        background-color: #e5beec;
-      }
-
-      form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        margin-bottom: 10px;
-      }
-
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        color: #2a2f4f;
-        text-align: center;
-      }
-
-      input,
-      button {
-        font-size: 14px;
-        padding: 5px 10px;
-        margin: 5px;
-      }
-
-      input {
-        background-color: #fde2f3;
-        color: #2a2f4f;
-        font-size: 14px;
-        border-radius: 10px;
-        border: 2px solid #2a2f4f;
-      }
-
-      button {
-        background-color: #2a2f4f;
-        color: #fde2f3;
-        font-size: 14px;
-        border-radius: 10px;
-        border: 2px solid #2a2f4f;
-        cursor: pointer;
-      }
-
-      #home,
-      #login,
-      #register {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #917fb3;
-        border-radius: 4px;
-        padding: 20px;
-        background-color: #fde2f3;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border: 2px solid #2a2f4f;
-        border-radius: 10px;
-      }
-
-      #chat-input,
-      #chat-log {
-        width: 100%;
-        max-width: 500px;
-      }
-
-      #chat-input {
-        height: 60px;
-        resize: none;
-        overflow-y: auto;
-        border: 2px solid #917fb3;
-        background-color: #fde2f3;
-        color: #917fb3;
-        padding: 10px;
-        border-radius: 4px;
-        margin-bottom: 10px;
-      }
-
-      #chat-input::placeholder {
-        color: #917fb3;
-      }
-
-      #chat-log {
-        height: 300px;
-        overflow-y: auto;
-        border: 2px solid #917fb3;
-        color: #917fb3;
-        background-color: #fde2f3;
-        padding: 10px;
-        border-radius: 4px;
-        margin-bottom: 10px;
-      }
-
-      #chat-log div {
-        margin-bottom: 5px;
-      }
-
-      #chat-log .system {
-        color: #917fb3;
-        font-style: italic;
-      }
-
-      #chatroom {
-        display: flex;
-        width: 500px;
-        flex-direction: column-reverse;
-        outline: 0;
-      }
-    </style>
+    <style></style>
   </head>
 
   <body>
@@ -152,7 +34,7 @@
           required
         />
         <button type="submit">Login</button>
-        <button id="login-register-button">Register</button>
+        <a id="login-register-button">Register</a>
       </form>
     </div>
 
@@ -193,6 +75,6 @@
       <textarea id="chat-input" placeholder="Type your message..."></textarea>
     </div>
 
-    <script src="./static/index.js?v=69.661"></script>
+    <script src="./static/index.js?v=69.665"></script>
   </body>
 </html>

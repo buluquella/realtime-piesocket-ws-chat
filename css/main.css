@@ -28,7 +28,8 @@ h6 {
 }
 
 input,
-button {
+button,
+a {
   font-size: 14px;
   padding: 5px 10px;
   margin: 5px;
@@ -43,6 +44,15 @@ input {
 }
 
 button {
+  background-color: #2a2f4f;
+  color: #fde2f3;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 2px solid #2a2f4f;
+  cursor: pointer;
+}
+
+a {
   background-color: #2a2f4f;
   color: #fde2f3;
   font-size: 14px;
